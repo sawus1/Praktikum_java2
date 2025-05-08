@@ -1,0 +1,5 @@
+I2:Java 2:Rump:100
+I2:Algorithmen und Datenstrukturen:Streekmann:80
+MT2:Mathematik 2:von Coelln:60
+MT2:Audio-/Videotechnik:Lemke:50
+E2:Mathematik 2:Rabe:70
