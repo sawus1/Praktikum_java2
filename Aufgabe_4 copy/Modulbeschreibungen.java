@@ -75,19 +75,18 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 
 					for (int i = 1; i < typeMitZertifikat.length; i++) {
 						StringBuilder zertifikat = new StringBuilder(typeMitZertifikat[i]);
-						
-						//System.out.println(zertifikat);
-						
-						//und
-						if(zertifikat.toString().endsWith("und"))
-							zertifikat.delete(zertifikat.length()-4, zertifikat.length());
-							
+
+						// System.out.println(zertifikat);
+
+						// und
+						if (zertifikat.toString().endsWith("und"))
+							zertifikat.delete(zertifikat.length() - 4, zertifikat.length());
+
 						// , Wahlpflichtmodul
-						if(zertifikat.toString().contains("Wahlpflichtmodul"))
-							zertifikat.delete(zertifikat.indexOf("Wahlpflichtmodul")-2, zertifikat.indexOf("Wahlpflichtmodul")+"Wahlpflichtmodul".length() );
-						
-						
-						
+						if (zertifikat.toString().contains("Wahlpflichtmodul"))
+							zertifikat.delete(zertifikat.indexOf("Wahlpflichtmodul") - 2,
+									zertifikat.indexOf("Wahlpflichtmodul") + "Wahlpflichtmodul".length());
+
 						alleZertifikate.add(zertifikat.toString());
 					}
 				}
@@ -124,16 +123,18 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 	@Override
 	public int getAnzahlModule(String Studiengang, Boolean pflicht) {
 		int count = 0;
-		if(pflicht != null) {
-		String istPflicht = pflicht.booleanValue() ? "Pflichtmodul" : "Wahlpflichtmodul";
+		String istPflicht;
+		if (pflicht != null) 
+			istPflicht = pflicht.booleanValue() ? "Pflichtmodul" : "Wahlpflichtmodul";
+		else
+			istPflicht = "modul";
+		
 		for (Modul m : module) {
-			if (m.studiengang.equals(Studiengang) && istPflicht.equals(m.type))
-				count++;
+				if (m.studiengang.equals(Studiengang) && m.type.contains(istPflicht))
+					count++;
 			}
-		return count;
-		}
-		else 
-			return module.size();
+			return count;
+		
 	}
 
 	@Override
@@ -173,7 +174,7 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 					ECTSofSemester += Double.parseDouble(modul.ectsPoints.replace(",", "."));
 			}
 			Integer ECTSasInt = (int) (Math.round(ECTSofSemester));
-			if(ECTSasInt > 0)
+			if (ECTSasInt > 0)
 				allECTS.put(semester, ECTSasInt);
 		}
 		return allECTS;
@@ -196,7 +197,7 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 					}
 				}
 			}
-			if(SWSofSemester > 0)
+			if (SWSofSemester > 0)
 				allSWS.put(i, SWSofSemester);
 		}
 		return allSWS;
