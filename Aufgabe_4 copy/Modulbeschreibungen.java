@@ -86,10 +86,10 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 							}
 							if (zertifikat.indexOf("und") == zertifikat.length() - 4)
 								zertifikat.delete(zertifikat.length() - 5, zertifikat.length() - 1);
-								
-							if(zertifikat.toString().contains(","))
+
+							if (zertifikat.toString().contains(","))
 								zertifikat.deleteCharAt(zertifikat.indexOf(","));
-							
+
 							if (!zertifikate.contains(zertifikat.toString()))
 								zertifikate.add(zertifikat.toString());
 						}
@@ -278,6 +278,8 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 				System.out.println("  Veranstaltungen (alle): " + mb.getAnzahlVeranstaltungen(studiengang, null));
 				System.out.println("  ECTS je Semester: " + mb.getECTS(studiengang));
 				System.out.println("  SWS je Semester: " + mb.getSWS(studiengang));
+				System.out.println();
+				System.out.println(mb.getJSON(studiengang));
 			}
 
 			System.out.println("Verzahnte Module: " + mb.getVerzahnteModule());

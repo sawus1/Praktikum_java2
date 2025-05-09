@@ -1,0 +1,6 @@
+Modul A|MOD-A|BI|2|Pflichtmodul|5|Klausur|F. Rump
+A1|F. Rump|2
+
+Modul B|MOD-B|BI|WPM|Wahlpflichtmodul Zertifikat IT-Sicherheit|5|Studienarbeit|F. Rump
+B1|F. Rump|2
+
