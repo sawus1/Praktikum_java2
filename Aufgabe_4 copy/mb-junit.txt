@@ -1,0 +1,70 @@
+Computeranimation|CMAN-I17|BI|WPM|Wahlpflichtmodul Zertifikat Medieninformatik|7,5|Klausur 1,5h oder muendliche Pruefung|M. Rauschenberger
+Computeranimation|B. Arp|4
+Praktikum Computeranimation|B. Arp|2
+
+Software-Qualitaetsmanagement|SWQM-I17|BI|6|Pflichtmodul|5|Klausur 1,5h oder muendliche Pruefung|N. Streekmann
+Software-Qualitaetssicherung|N. Streekmann|2
+Praktikum Software-Qualitaetssicherung|N. Streekmann|2
+
+Interdisziplinaeres Arbeiten|IARB-I17|BI|WPM|Wahlpflichtmodul|2,5|Studienarbeit|M. Krueger-Basener
+Neue Technik-Horizonte|M. Krueger-Basener|2
+
+Mikrowellenmesstechnik|MWMT-I17|BI|WPM|Wahlpflichtmodul|2,5|muendliche Pruefung oder Kursarbeit oder Klausur 1 h|H.-F. Harms
+Mikrowellenmesstechnik|J. Wiebe (LB)|2
+
+AV-Produktion|AVPR-M17|BMT|WPM|Wahlpflichtmodul Zertifikat AV-Technik und Zertifikat Computer-Aided Media Production|5|Klausur 1,5h oder mndliche Pr�fung oder Studienarbeit|T. Lemke
+Audiovisuelle Produktion|T. Lemke, A. Klein|4
+
+Marketing fuer Ingenieure|MRKT-I17|BI|WPM|Wahlpflichtmodul Zertifikat Marketing und Vertrieb|5|Klausur 1,5 h oder muendliche Pruefung oder Kursarbeit|L. Jaenchen
+Marketing fuer Ingenieure|L. Jaenchen|2
+Praktikum Marketing fuer Ingenieure|L. Jaenchen|2
+
+Digitale Signalverarbeitung|DSVA-E17|BET|WPM|Wahlpflichtmodul Zertifikat Nachrichtentechnik und Zertifikat Technische Informatik|5|Klausur 1,5 h oder muendliche Pruefung|J.-M. Batke
+Digitale Signalverarbeitung|J.-M. Batke|3
+Praktikum Digitale Signalverarbeitung|J.-M. Batke|1
+
+Multimediaprojekte|MMPJ-M17|BMT|WPM|Wahlpflichtmodul Zertifikat Computer-Aided Media Production|5|Erstellung und Dokumentation von Rechnerprogrammen und/oder Muendliche Pruefung|G. J. Veltink
+Multimediaprojekte|G. J. Veltink|2
+Praktikum Multimediaprojekte|G. J. Veltink|2
+
+HW/SW Codesign|HWSW-E17|BET|WPM|Wahlpflichtmodul Zertifikat Technische Informatik|5|Klausur 1,5h oder muendliche Pruefung oder Studienarbeit|C. Koch
+HW/SW-Codesign|C. Koch|2
+Praktikum HW/SW-Codesign|C. Koch|2
+
+Softwaresicherheit|SWSE-I17|BI|WPM|Wahlpflichtmodul Zertifikat IT-Sicherheit|5|Kursarbeit oder Klausur 1,5h|C. Link
+Softwaresicherheit|C. Link|4
+
+MATLAB Seminar||BI|WPM|Wahlpflichtmodul|2,5|Studienarbeit|G. Kane
+MATLAB Seminar|G. Kane|2
+
+Data Science|DASC-I17|BI|5|Pflichtmodul|5|Klausur 1,5 h oder muendliche Pruefung|T. Schmidt
+Data Science|T. Schmidt|3
+Praktikum Data Science|T. Schmidt|1
+
+Kommunikationssysteme|KOSY-I17|BI|WPM|Wahlpflichtmodul|5|Kursarbeit oder muendliche Pruefung oder Klausur 1 h|H.-F. Harms
+Kommunikationssysteme|T. Buescher|2
+Praktikum Kommunikationssysteme|H.-F. Harms|2
+
+Betriebssysteme|BTRS-I17|BI|4|Pflichtmodul|5|Klausur 1,5h oder muendliche Pruefung|C. Link
+Betriebssysteme|C. Link|2
+Praktikum Betriebssysteme|C. Link|2
+
+Hochfrequenztechnik|HFTE-E17|BET|WPM|Wahlpflichtmodul Zertifikat Nachrichtentechnik|5|Kursarbeit oder muendliche Pruefung oder Klausur 1,0 h|H.-F. Harms
+Hochfrequenztechnik|H.-F. Harms|2
+Praktikum Hochfrequenztechnik|H.-F. Harms|2
+
+HW/SW Codesign|HWSW-E17|BI|WPM|Wahlpflichtmodul Zertifikat Technische Informatik|5|Klausur 1,5h oder muendliche Pruefung oder Studienarbeit|C. Koch
+HW/SW-Codesign|C. Koch|2
+Praktikum HW/SW-Codesign|C. Koch|2
+
+Digitale Fotografie|DIFO-M17|BMT|WPM|Wahlpflichtmodul|2,5|Kursarbeit|C. Koch
+Digitale Fotografie|E. Buehler (LB)|2
+
+Elektrotechnik 3|ETE3-E17|BET|3|Pflichtmodul|5|Klausur 1,5 h|J. Rolink
+Elektrische Maschinen|M. Masur|2
+Praktikum Elektrotechnik B|J. Rolink|2
+
+Mathematik 2|MAT2-M17|BMT|2|Pflichtmodul|7,5|Klausur 1,5 h oder muendliche Pruefung|I. Schebesta
+Mathematik 2|I. Schebesta|4
+Uebung Mathematik 2|R. Heuermann|2
+

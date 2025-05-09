@@ -62,42 +62,39 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 
 	@Override
 	public Set<String> getZertifikate(String studiengang) {
-		Set<String> zertifikate = new HashSet<>();
+		Set<String> alleZertifikate = new HashSet<>();
 		for (Modul modul : module) {
 			if (modul.studiengang.equals(studiengang)) {
 				String type = modul.type;
 				if (type.contains("Zertifikat")) {
 
-					String[] typeMitZertifikat = type.split(" ");
+					String[] typeMitZertifikat = type.split(" Zertifikat ");
 //					for (String s : typeMitZertifikat)
 //						System.out.print(s + " ");
 //					System.out.println();
 
 					for (int i = 1; i < typeMitZertifikat.length; i++) {
-//						System.out.println(typeMitZertifikat[i]);
-						if (typeMitZertifikat[i].equals("Zertifikat")) {
-							StringBuilder zertifikat = new StringBuilder();
-
-							while (i + 1 < typeMitZertifikat.length && (!typeMitZertifikat[i + 1].contains("Zertifikat")
-									&& !typeMitZertifikat[i + 1].contains("Wahlpflichtmodul"))) {
-
-								zertifikat.append(typeMitZertifikat[i + 1] + " ");
-								i++;
-							}
-							if (zertifikat.indexOf("und") == zertifikat.length() - 4)
-								zertifikat.delete(zertifikat.length() - 5, zertifikat.length() - 1);
-
-							if (zertifikat.toString().contains(","))
-								zertifikat.deleteCharAt(zertifikat.indexOf(","));
-
-							if (!zertifikate.contains(zertifikat.toString()))
-								zertifikate.add(zertifikat.toString());
-						}
+						StringBuilder zertifikat = new StringBuilder(typeMitZertifikat[i]);
+						
+						//System.out.println(zertifikat);
+						
+						//und
+						if(zertifikat.toString().endsWith("und"))
+							zertifikat.delete(zertifikat.length()-4, zertifikat.length());
+							
+						// , Wahlpflichtmodul
+						if(zertifikat.toString().contains("Wahlpflichtmodul"))
+							zertifikat.delete(zertifikat.indexOf("Wahlpflichtmodul")-2, zertifikat.indexOf("Wahlpflichtmodul")+"Wahlpflichtmodul".length() );
+						
+						
+						
+						alleZertifikate.add(zertifikat.toString());
 					}
 				}
 			}
 		}
-		return zertifikate;
+		return alleZertifikate;
+
 	}
 
 	public int getMaxSemester() {
@@ -113,7 +110,7 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 	}
 
 	public Set<String> getVerzahnteModule() {
-		Set<String> verzahnteModule = new HashSet<String>();
+		Set<String> verzahnteModule = new HashSet<>();
 		for (Modul m : module) {
 			for (Modul s : module) {
 				if (m.name.equals(s.name) && !m.studiengang.equals(s.studiengang)) {
