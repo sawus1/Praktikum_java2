@@ -124,12 +124,16 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 	@Override
 	public int getAnzahlModule(String Studiengang, Boolean pflicht) {
 		int count = 0;
+		if(pflicht != null) {
 		String istPflicht = pflicht.booleanValue() ? "Pflichtmodul" : "Wahlpflichtmodul";
 		for (Modul m : module) {
 			if (m.studiengang.equals(Studiengang) && istPflicht.equals(m.type))
 				count++;
-		}
+			}
 		return count;
+		}
+		else 
+			return module.size();
 	}
 
 	@Override
@@ -160,16 +164,17 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 		Map<Integer, Integer> allECTS = new HashMap<>();
 		int maxSemester = getMaxSemester();
 
-		for (Integer i = 1; i <= maxSemester; i++) {
+		for (Integer semester = 1; semester <= maxSemester; semester++) {
 			Double ECTSofSemester = 0.0;
 			for (Modul modul : module) {
 
-				if (!modul.semester.contains("WPM") && Integer.parseInt(modul.semester) == i
+				if (!modul.semester.contains("WPM") && Integer.parseInt(modul.semester) == semester
 						&& modul.studiengang.equals(studiengang))
 					ECTSofSemester += Double.parseDouble(modul.ectsPoints.replace(",", "."));
 			}
-			Integer ECTSasInt = (ECTSofSemester.intValue());
-			allECTS.put(i, ECTSasInt);
+			Integer ECTSasInt = (int) (Math.round(ECTSofSemester));
+			if(ECTSasInt > 0)
+				allECTS.put(semester, ECTSasInt);
 		}
 		return allECTS;
 	}
@@ -191,7 +196,8 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 					}
 				}
 			}
-			allSWS.put(i, SWSofSemester);
+			if(SWSofSemester > 0)
+				allSWS.put(i, SWSofSemester);
 		}
 		return allSWS;
 	}
