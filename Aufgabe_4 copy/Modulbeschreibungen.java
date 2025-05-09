@@ -112,9 +112,13 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 		Set<String> verzahnteModule = new HashSet<>();
 		for (Modul m : module) {
 			for (Modul s : module) {
-				if (m.name.equals(s.name) && !m.studiengang.equals(s.studiengang)) {
-					verzahnteModule.add(m.kuerzel);
-				}
+				System.out.println();
+				if (m.PrsInCharge.equals(s.PrsInCharge) && // gleicher verantwortlicher
+						m.name.equals(s.name) && // gleiche bezeichnung
+						!m.studiengang.equals(s.studiengang) && // unterschiedlicher Studiengang
+						m.kuerzel.contains(s.kuerzel.substring(0, s.kuerzel.indexOf("-")))) // gleicher Kürzel
+					verzahnteModule.add(m.name);
+
 			}
 		}
 		return verzahnteModule;
@@ -124,17 +128,15 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 	public int getAnzahlModule(String Studiengang, Boolean pflicht) {
 		int count = 0;
 		String istPflicht;
-		if (pflicht != null) 
+		if (pflicht != null)
 			istPflicht = pflicht.booleanValue() ? "Pflichtmodul" : "Wahlpflichtmodul";
 		else
 			istPflicht = "modul";
-		
 		for (Modul m : module) {
-				if (m.studiengang.equals(Studiengang) && m.type.contains(istPflicht))
-					count++;
-			}
-			return count;
-		
+			if (m.studiengang.equals(Studiengang) && m.type.contains(istPflicht))
+				count++;
+		}
+		return count;
 	}
 
 	@Override
