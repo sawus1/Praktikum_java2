@@ -62,25 +62,38 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 
 	@Override
 	public Set<String> getZertifikate(String studiengang) {
-		Set<String> zertifikate = new HashSet<>();
-		for(Modul modul : module) {
-			String type = modul.type;
-			if(type.contains("Zertifikat")) {
-				String[] typeMitZertifikat = type.split(" ");
-				StringBuilder zertifikat = new StringBuilder();
-				for(int i = 0; i < typeMitZertifikat.length;i++) {
-					if(typeMitZertifikat[i].equals("Zertifikat")) {
-						while(!typeMitZertifikat[i+1].contains("Zertifikat")|| i>=typeMitZertifikat.length) {
-							zertifikat.append(typeMitZertifikat[i+1]);
-							i++;
-						}
-						zertifikate.add(zertifikat.toString());
+		Set<String> alleZertifikate = new HashSet<>();
+		for (Modul modul : module) {
+			if (modul.studiengang.equals(studiengang)) {
+				String type = modul.type;
+				if (type.contains("Zertifikat")) {
+
+					String[] typeMitZertifikat = type.split(" Zertifikat ");
+//					for (String s : typeMitZertifikat)
+//						System.out.print(s + " ");
+//					System.out.println();
+
+					for (int i = 1; i < typeMitZertifikat.length; i++) {
+						StringBuilder zertifikat = new StringBuilder(typeMitZertifikat[i]);
+
+						// System.out.println(zertifikat);
+
+						// und
+						if (zertifikat.toString().endsWith("und"))
+							zertifikat.delete(zertifikat.length() - 4, zertifikat.length());
+
+						// , Wahlpflichtmodul
+						if (zertifikat.toString().contains("Wahlpflichtmodul"))
+							zertifikat.delete(zertifikat.indexOf("Wahlpflichtmodul") - 2,
+									zertifikat.indexOf("Wahlpflichtmodul") + "Wahlpflichtmodul".length());
+
+						alleZertifikate.add(zertifikat.toString());
 					}
-				}	
+				}
 			}
-			
 		}
-		return zertifikate;
+		return alleZertifikate;
+
 	}
 
 	public int getMaxSemester() {
@@ -96,12 +109,16 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 	}
 
 	public Set<String> getVerzahnteModule() {
-		Set<String> verzahnteModule = new HashSet<String>();
+		Set<String> verzahnteModule = new HashSet<>();
 		for (Modul m : module) {
 			for (Modul s : module) {
-				if (m.name.equals(s.name) && !m.studiengang.equals(s.studiengang)) {
-					verzahnteModule.add(m.kuerzel);
-				}
+				System.out.println();
+				if (m.PrsInCharge.equals(s.PrsInCharge) && // gleicher verantwortlicher
+						m.name.equals(s.name) && // gleiche bezeichnung
+						!m.studiengang.equals(s.studiengang) && // unterschiedlicher Studiengang
+						m.kuerzel.contains(s.kuerzel.substring(0, s.kuerzel.indexOf("-")))) // gleicher Kürzel
+					verzahnteModule.add(m.name);
+
 			}
 		}
 		return verzahnteModule;
@@ -110,9 +127,13 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 	@Override
 	public int getAnzahlModule(String Studiengang, Boolean pflicht) {
 		int count = 0;
-		String istPflicht = pflicht.booleanValue() ? "Pflichtmodul" : "Wahlpflichtmodul";
+		String istPflicht;
+		if (pflicht != null)
+			istPflicht = pflicht.booleanValue() ? "Pflichtmodul" : "Wahlpflichtmodul";
+		else
+			istPflicht = "modul";
 		for (Modul m : module) {
-			if (m.studiengang.equals(Studiengang) && istPflicht.equals(m.type))
+			if (m.studiengang.equals(Studiengang) && m.type.contains(istPflicht))
 				count++;
 		}
 		return count;
@@ -146,15 +167,17 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 		Map<Integer, Integer> allECTS = new HashMap<>();
 		int maxSemester = getMaxSemester();
 
-		for (Integer i = 1; i <= maxSemester; i++) {
-			Integer ECTSofSemester = 0;
+		for (Integer semester = 1; semester <= maxSemester; semester++) {
+			Double ECTSofSemester = 0.0;
 			for (Modul modul : module) {
 
-				if (!modul.semester.contains("WPM") && Integer.parseInt(modul.semester) == i
+				if (!modul.semester.contains("WPM") && Integer.parseInt(modul.semester) == semester
 						&& modul.studiengang.equals(studiengang))
-					ECTSofSemester += Integer.parseInt(modul.ectsPoints);
+					ECTSofSemester += Double.parseDouble(modul.ectsPoints.replace(",", "."));
 			}
-			allECTS.put(i, ECTSofSemester);
+			Integer ECTSasInt = (int) (Math.round(ECTSofSemester));
+			if (ECTSasInt > 0)
+				allECTS.put(semester, ECTSasInt);
 		}
 		return allECTS;
 	}
@@ -176,7 +199,8 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 					}
 				}
 			}
-			allSWS.put(i, SWSofSemester);
+			if (SWSofSemester > 0)
+				allSWS.put(i, SWSofSemester);
 		}
 		return allSWS;
 	}
@@ -209,76 +233,78 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 		return sortierteSg;
 	}
 
-	@Override
-	public String getJSON(String Studiengang)
-    {
+	public String getJSON(String Studiengang) {
+	    Set<Modul> mod = new HashSet<>();
+	    for (Modul m : module) {
+	        if (m.studiengang.equals(Studiengang))
+	            mod.add(m);
+	    }
 
-        Set<Modul> mod = new HashSet<Modul>();
-        for(Modul m : module)
-        {
-            if(m.studiengang.equals(Studiengang)) mod.add(m);
-        }
+	    StringBuilder jsonResult = new StringBuilder();
+	    jsonResult.append("[\n");
 
-        StringBuilder jsonResult = new StringBuilder();
+	    int modulCount = 0;
+	    for (Modul modul : mod) {
+	        if (modulCount > 0) jsonResult.append(",\n");
+	        modulCount++;
+	        modul.ectsPoints = modul.ectsPoints.replace(',', '.');
+	        jsonResult.append("{\n");
+	        jsonResult.append("\t\"bezeichnung\": \"" + modul.name + "\",\n");
+	        jsonResult.append("\t\"kuerzel\": \"" + modul.kuerzel + "\",\n");
+	        jsonResult.append("\t\"studiengang\": \"" + modul.studiengang + "\",\n");
+	        jsonResult.append("\t\"semester\": \"" + modul.semester + "\",\n");
+	        jsonResult.append("\t\"art\": \"" + modul.type + "\",\n");
+	        jsonResult.append("\t\"ects\": " + modul.ectsPoints + ",\n");
+	        jsonResult.append("\t\"pruefungsform\": \"" + modul.examtype + "\",\n");
+	        jsonResult.append("\t\"verantwortlicher\": \"" + modul.PrsInCharge + "\",\n");
+	        jsonResult.append("\t\"veranstaltungen\": [\n");
+	        int veranstaltungCount = 0;
+	        for (Veranstaltung v : modul.Veranstaltungen) {
+	            if (veranstaltungCount > 0) jsonResult.append(",\n");
+	            veranstaltungCount++;
 
-        jsonResult.append("[{");
+	            jsonResult.append("\t{\n");
+	            jsonResult.append("\t\t\"titel\": \"" + v.titel + "\",\n");
+	            jsonResult.append("\t\t\"dozenten\": \"" + v.Dozent + "\",\n");
+	            jsonResult.append("\t\t\"sws\": " + v.sws + "\n");
+	            jsonResult.append("\t}");
+	        }
+	        jsonResult.append("\n\t]\n");
+	        jsonResult.append("}");
+	    }
 
-        for(Modul modul : mod)
-		{
-			jsonResult.append("\t\"bezeichnung\": " + "\"" + modul.name + "\",\n");
-			jsonResult.append("\t\"kuerzel\": " + "\"" + modul.kuerzel + "\",\n");
-			jsonResult.append("\t\"studiengang\": " + "\"" + modul.studiengang + "\",\n");
-			jsonResult.append("\t\"semester\": " + "\"" + modul.semester + "\",\n");
-			jsonResult.append("\t\"art\": " + "\"" + modul.type + "\",\n");
-			jsonResult.append("\t\"ects\": "  + modul.ectsPoints + ",\n");
-			jsonResult.append("\t\"pruefungsform\": " + "\"" + modul.examtype + "\",\n");
-			jsonResult.append("\t\"verantwortlicher\": " + "\"" + modul.PrsInCharge + "\",\n");
-			jsonResult.append("\t\"veranstaltungen\": [{\n");
-			for(Veranstaltung v : modul.Veranstaltungen)
-			{
-				jsonResult.append("\t\t\"titel\": " + "\"" + v.titel + "\",\n");
-				jsonResult.append("\t\t\"dozenten\": " + "\"" + v.Dozent + "\",\n");
-				jsonResult.append("\t\t\"sws\": " + v.sws + ",\n");
-				jsonResult.append("\t}, {\n");
-			}
-			jsonResult.replace(jsonResult.length() - 4, jsonResult.length() - 1, "]");
-			jsonResult.append("}, {\n");
-		}
-		jsonResult.replace(jsonResult.length() - 4, jsonResult.length() - 1, "]");
-		return jsonResult.toString();
+	    jsonResult.append("\n]");
+	    return jsonResult.toString();
+	}
 
-
-
-    }
 
 	public static void main(String[] args) {
 		try {
-			Modulbeschreibungen mb = new Modulbeschreibungen(
-					"/home/ino/eclipse-workspace/Programmieren2/src/Aufgabe_4/Modulbeschreibungen");
-			System.out.println("Anzahl aller Module: " + mb.module.size());
-			System.out.println(
-					"Wahlpflicht-Veranstaltungen im Studiengang BI: " + mb.getAnzahlVeranstaltungen("BI", false));// 43
-																													// ?
-			System.out
-					.println("Pflicht-Veranstaltungen im Studiengang BMT: " + mb.getAnzahlVeranstaltungen("BMT", true));// 43
-																														// ?
-			System.out.println("Veranstaltungen im Studiengang BET: " + mb.getAnzahlVeranstaltungen("BET", null));// 43
-																													// ?
-			System.out.println("Anzahl aller Veranstaltungen: " + (mb.getAnzahlVeranstaltungen("BI", null)
-					+ mb.getAnzahlVeranstaltungen("BET", null) + mb.getAnzahlVeranstaltungen("BMT", null)));
+			String testDateipfad = "/Users/oleksandrsavcenko/Workspace/Java/j/Praktikum_java2/Aufgabe_4/mb-junit.txt";
+			Modulbeschreibungen mb = new Modulbeschreibungen(testDateipfad);
 
-			System.out.println("Map der ECTS-Punkte von BI:");
-			System.out.println(mb.getECTS("BI"));
+			System.out.println("Anzahl Module insgesamt: " + mb.module.size());
 
-			System.out.println("Map der SWS-Punkte von BI:");
-			System.out.println(mb.getSWS("BI"));
+			for (String studiengang : mb.studiengaenge) {
+				System.out.println("Studiengang: " + studiengang);
+				System.out.println("  Pflichtmodule: " + mb.getAnzahlModule(studiengang, true));
+				System.out.println("  Wahlpflichtmodule: " + mb.getAnzahlModule(studiengang, false));
+				System.out.println("  Veranstaltungen (alle): " + mb.getAnzahlVeranstaltungen(studiengang, null));
+				System.out.println("  ECTS je Semester: " + mb.getECTS(studiengang));
+				System.out.println("  SWS je Semester: " + mb.getSWS(studiengang));
+				System.out.println();
+				System.out.println(mb.getJSON(studiengang));
+			}
 
-			System.out.println("Studiengänge(intern): " + mb.studiengaenge);
-			System.out.println("Studiengänge sortiert(nach sws): " + mb.getSortierteStudiengaenge());
+			//System.out.println("Verzahnte Module: " + mb.getVerzahnteModule());
+			//System.out.println("Sortierte Studiengänge (nach SWS): " + mb.getSortierteStudiengaenge());
+			//System.out.println("Zertifikate für BMT: " + mb.getZertifikate("BMT"));
+			//System.out.println("Zertifikate für BI: " + mb.getZertifikate("BI"));
+			//System.out.println("Zertifikate für BET: " + mb.getZertifikate("BET"));
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Fehler beim Lesen der Datei: " + e.getMessage());
 		}
 	}
+
 }
