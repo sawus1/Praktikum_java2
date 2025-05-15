@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,30 +20,62 @@ public class Vorlesungsverzeichnis {
 		for (String line = br.readLine(); line != null; line = br.readLine())
 			result.add(Arrays.asList(line.split(":")));
 		br.close();
+
 		return result;
 	}
 
-	public Vorlesungsverzeichnis(String filename) {
+	public Vorlesungsverzeichnis(String filename) throws IOException, TextFileFormatException {
 		List<List<String>> Datenbasis;
-		try {
-			Datenbasis = load(filename);
-			for (List<String> zeile : Datenbasis) {
-				vorlesungen.add(new Vorlesung(zeile));
+//		try {
+		Datenbasis = load(filename);
+		for (List<String> zeile : Datenbasis) {
+			// Überprüfen ob Zeile gültig ist:
+			if (zeile.isEmpty())
+				throw new TextFileFormatException("Zeile ist Leer");
+			// Anzahl Elemente
+			if (zeile.size() != 4)
+				throw new TextFileFormatException("Länge der Zeile ungültig");
+
+			// Leere Elemente
+			for (int i = 0; i < 4; i++) {
+				if (zeile.get(i).isBlank())
+					throw new TextFileFormatException("Element " + i + " ist Leer");
 			}
-		} catch (IOException e) {
-			// throw TextFileFormatException();
-			System.err.println("FEHLER!!!!!!!");
-			e.printStackTrace();
+			// Falsche Datentypen
+			for (int i = 0; i < 4; i++) {
+				String s = zeile.get(i);
+				char[] charArray = s.toCharArray();
+				if (i == 3) { // sollte Zahl sein
+					for (char ch : charArray) {
+						if (!Character.isDigit(ch)) {
+							throw new TextFileFormatException("Letztes Element der Zeile muss eine Zahl sein");
+						}
+					}
+				}
+
+			}
+
+			vorlesungen.add(new Vorlesung(zeile));
 		}
+//		} catch (IOException | TextFileFormatException e) {
+//			// throw TextFileFormatException();
+//			e.printStackTrace();
+//		} 
+//		catch (TextFileFormatException e) {
+//			//System.err.println("Datei hat das falsche Format");
+//			e.printStackTrace();
+//		}
 
 	}
 
 	public List<String> titles() {
 		List<String> alleTitel = new ArrayList<>();
 		for (Vorlesung v : vorlesungen) {
-			alleTitel.add(v.titel);
+			if(!alleTitel.contains(v.titel))
+				alleTitel.add(v.titel);
 		}
-		alleTitel.sort(null);
+		Collections.sort(alleTitel);
+//		alleTitel.sort(null);
 		return alleTitel;
 	}
 
@@ -100,29 +133,48 @@ public class Vorlesungsverzeichnis {
 	public List<String> descendingTitles() {
 		List<String> titles = new ArrayList<>();
 		Set<Vorlesung> alleVorlesungen = new HashSet<>(vorlesungen);
-		int groessteTeilnehmer = 0;
-		while (titles.size() != titles().size()) {
-			for (Vorlesung v : alleVorlesungen) {
+
+		while (titles.size() != vorlesungen.size()) { // solange bis alle Titel eigefügt wurden
+			int groessteTeilnehmer = 0;
+			for (Vorlesung v : alleVorlesungen) { // Welche ist die größte Teilnehmeranzahl
 				if (groessteTeilnehmer < v.teilnehmerzahl)
 					groessteTeilnehmer = v.teilnehmerzahl;
 			}
-
-			for (Vorlesung v : vorlesungen) {
+			for (Vorlesung v : vorlesungen) { // Größte Vorlesung zum Ergebnis hinzufügen und aus den restlichen
+												// entfernen
 				if (v.teilnehmerzahl == groessteTeilnehmer) {
 					titles.add(v.titel);
+					alleVorlesungen.remove(v);
 				}
 			}
 		}
-
 		return titles;
 	}
 
 	public static void main(String[] args) {
 
-		Vorlesungsverzeichnis vl = new Vorlesungsverzeichnis("/Users/oleksandrsavcenko/Workspace/Java/Praktikum_Programmieren2/Aufgabe3/src/datei.txt");
-		System.out.println(vl.workaholics());
-		System.out.println(vl.groupToTitles());
-		System.out.println("Mehrfache titel: " + vl.multipleTitles());
+		Vorlesungsverzeichnis vl;
+		try {
+			vl = new Vorlesungsverzeichnis(
+					"/Users/oleksandrsavcenko/Workspace/Java/j/Praktikum_java2/Aufgabe3/src/datei.txt");
+			List<String> titelImVerzeichnis = vl.titles();
+			System.out.println("-----Alle Titel-----");
+			for(String s:titelImVerzeichnis) {
+				System.out.println(s);
+			}
+			
+			System.out.println("workaholics: "+vl.workaholics());
+			System.out.println("group to titles: "+vl.groupToTitles());
+			System.out.println("Mehrfache titel: " + vl.multipleTitles());
+			
+			
+			System.out.println("In absteigender Teilnehmerzahl: " + vl.descendingTitles());
 
-	}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TextFileFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	}
 }

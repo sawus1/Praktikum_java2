@@ -1,0 +1,8 @@
+A1:Relativitaetstheorie:Einstein:15
+B2:Quantenmechanik:Heisenberg:17
+C2:Quantenphysik:Planck:5
+T4:Thermodynamik:Kelvin:78
+C2:Theoretische Physik:Kelvin:54
+B2:Thermodynamik:Planck:44
+T4:Quantenphysik:Planck:45
+B2:Elektrodynamik:Kelvin:34
