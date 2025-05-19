@@ -5,6 +5,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class KlausurenServerThread extends Thread{
 	Socket ClientSocket;
@@ -22,11 +25,19 @@ public class KlausurenServerThread extends Thread{
 				
 			String anfrage;
 			String methode = "";
+			String key = "";
+			ArrayList<Integer> value = new ArrayList<>();
 			while((anfrage = eingang.readLine()) != null) {
 				methode = anfrage.split(" ")[0];
+				key = anfrage.split(" ")[1];
+				for(String s : anfrage.split(" ")[2].replaceAll("[", "").replaceAll("]", "").split(","))
+					value.add(Integer.parseInt(s));
+				
 			}
 			switch (methode){
 				case "PUT": 
+					
+					KlausurenServer.putValue(key, value);
 					
 				
 			}
