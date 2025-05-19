@@ -156,7 +156,7 @@ public class Vorlesungsverzeichnis {
 		Vorlesungsverzeichnis vl;
 		try {
 			vl = new Vorlesungsverzeichnis(
-					"/Users/oleksandrsavcenko/Workspace/Java/j/Praktikum_java2/Aufgabe3/src/datei.txt");
+					"/home/ino/Praktikum_java2/Aufgabe3/src/datei.txt");
 			List<String> titelImVerzeichnis = vl.titles();
 			System.out.println("-----Alle Titel-----");
 			for(String s:titelImVerzeichnis) {
