@@ -31,7 +31,9 @@ public class KlausurenServer{
 	}
 	
 	
-
+	public static Map<String,ArrayList<Integer>> getKlausurenInfor() {
+		return KlausurInfos;
+	}
 	
 	public static ArrayList<Integer> putValue(String key, ArrayList<Integer> value) {
 		
