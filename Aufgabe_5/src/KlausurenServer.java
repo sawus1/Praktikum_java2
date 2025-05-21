@@ -46,8 +46,8 @@ public class KlausurenServer {
 	}
 
 	public static ArrayList<Integer> putValue(String key, ArrayList<Integer> value) {
-
-		return KlausurInfos.put(key, value);
+		ArrayList<Integer> sortedValues = new ArrayList<>(new TreeSet(value));
+		return KlausurInfos.put(key, sortedValues);
 
 	}
 
@@ -63,27 +63,27 @@ public class KlausurenServer {
 
 	public static String getAllKlausuren() {
 		if (KlausurInfos.size() > 0) {
-			System.out.println("full Map:" + KlausurInfos);
+//			System.out.println("full Map:" + KlausurInfos);
 			StringBuilder allKlausuren = new StringBuilder("1 ");
 			for (ArrayList<Integer> originalList : KlausurInfos.values()) {
 				boolean subset = false;
-				System.out.println("originalList: " + originalList);
+//				System.out.println("originalList: " + originalList);
 				for (ArrayList<Integer> otherList : KlausurInfos.values()) {
 					if (originalList != otherList) {
 						if (otherList.containsAll(originalList)) {
 							subset = true;
 						}
-						System.out.println("otherList: " + otherList + subset);
+//						System.out.println("otherList: " + otherList + subset);
 					}
 				}
 				if (!subset) {
 					allKlausuren.append(originalList + ",");
-					System.out.println("All stand i:" + allKlausuren.toString());
+//					System.out.println("All stand i:" + allKlausuren.toString());
 				}
 
 			}
 			System.out.println(allKlausuren.toString());
-			return allKlausuren.toString();
+			return allKlausuren.toString().substring(0,allKlausuren.length()-1);
 		} else
 			return "0";
 
