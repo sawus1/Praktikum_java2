@@ -38,7 +38,7 @@ public class KlausurenServerThread extends Thread {
 				ObjectOutputStream dateiSpeichern = new ObjectOutputStream(
 						new FileOutputStream("/home/ino/Praktikum_java2/Aufgabe_5/src/KlausurenInformation"));) {
 			String anfrage = eingang.readLine();
-			StringBuilder antwort = new StringBuilder();
+			StringBuilder antwort = new StringBuilder("");
 
 			System.out.println(anfrage);
 			String methode = anfrage.split(" ")[0];
@@ -58,7 +58,7 @@ public class KlausurenServerThread extends Thread {
 				break;
 			case "GETALL":
 				System.out.println(methode);
-				antwort.append("1 ");
+			
 				antwort.append(KlausurenServer.getAllKlausuren());
 				break;
 			case "STOP":
@@ -72,7 +72,7 @@ public class KlausurenServerThread extends Thread {
 			default:
 				antwort.append("0 falsche Anfrage");
 			}
-			dateiSpeichern.writeObject(KlausurenServer.getKlausurenInfor());
+			dateiSpeichern.writeObject(KlausurenServer.getKlausurInfos());
 			serverAntwort.println(antwort.toString());
 
 		} catch (IOException e) {

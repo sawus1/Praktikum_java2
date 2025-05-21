@@ -6,7 +6,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class KlausurenServer {
 
@@ -30,12 +33,7 @@ public class KlausurenServer {
 				t.join();
 				client.close();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -43,7 +41,7 @@ public class KlausurenServer {
 
 	}
 
-	public static Map<String, ArrayList<Integer>> getKlausurenInfor() {
+	public static Map<String, ArrayList<Integer>> getKlausurInfos() {
 		return KlausurInfos;
 	}
 
@@ -64,8 +62,31 @@ public class KlausurenServer {
 	}
 
 	public static String getAllKlausuren() {
-		// TODO Auto-generated method stub
-		return null;
+		if (KlausurInfos.size() > 0) {
+			System.out.println("full Map:" + KlausurInfos);
+			StringBuilder allKlausuren = new StringBuilder("1 ");
+			for (ArrayList<Integer> originalList : KlausurInfos.values()) {
+				boolean subset = false;
+				System.out.println("originalList: " + originalList);
+				for (ArrayList<Integer> otherList : KlausurInfos.values()) {
+					if (originalList != otherList) {
+						if (otherList.containsAll(originalList)) {
+							subset = true;
+						}
+						System.out.println("otherList: " + otherList + subset);
+					}
+				}
+				if (!subset) {
+					allKlausuren.append(originalList + ",");
+					System.out.println("All stand i:" + allKlausuren.toString());
+				}
+
+			}
+			System.out.println(allKlausuren.toString());
+			return allKlausuren.toString();
+		} else
+			return "0";
+
 	}
 
 	public static boolean stopServer() {
