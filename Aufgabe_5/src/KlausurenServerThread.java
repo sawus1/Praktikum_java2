@@ -41,13 +41,12 @@ public class KlausurenServerThread extends Thread {
 			StringBuilder antwort = new StringBuilder("");
 
 			System.out.println(anfrage);
-			String methode = anfrage.split(" ")[0];
+			String methode = anfrage.split(" ")[0].toUpperCase();
 			System.out.println("Methode: " + methode);
 			
 			switch (methode) {
 			case "PUT":
 				System.out.println("PUT");
-				antwort.append("1 ");
 				antwort.append(KlausurenServer.putValue(getKey(anfrage), getValue(anfrage)));
 				break;
 			case "GET":
@@ -72,7 +71,7 @@ public class KlausurenServerThread extends Thread {
 					antwort.append("0");
 				break;
 			default:
-				antwort.append("0 falsche Anfrage");
+				antwort.append("0");
 			}
 			dateiSpeichern.writeObject(KlausurenServer.getKlausurInfos());
 			serverAntwort.println(antwort.toString());

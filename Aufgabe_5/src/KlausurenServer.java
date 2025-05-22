@@ -63,15 +63,19 @@ public class KlausurenServer {
 		return KlausurInfos;
 	}
 
-	public static ArrayList<Integer> putValue(String key, ArrayList<Integer> value) {
+	public static String putValue(String key, ArrayList<Integer> value) {
 		ArrayList<Integer> sortedValues = new ArrayList<>(new TreeSet(value));
-		return KlausurInfos.put(key, sortedValues);
+		List<Integer> oldValue = KlausurInfos.put(key, sortedValues);
+		if(oldValue != null)
+			return "1 " + oldValue.toString().replace("[", "").replace("]","").replaceAll(" ", "");
+		else
+			return "1 ";
 	}
 
 	public static String getValue(String key) {
 		List<Integer> value = KlausurInfos.get(key); 
 		if(value != null)
-			return "1 " + value.toString();
+			return "1 " + value.toString().replace("[", "").replace("]","").replaceAll(" ", "");
 		else
 			return "0";
 	}
@@ -79,7 +83,7 @@ public class KlausurenServer {
 	public static String deleteValue(String key) {
 		List<Integer> deletedValue = KlausurInfos.remove(key);
 		if(deletedValue != null)
-			return "1 " + deletedValue.toString();
+			return "1 " + deletedValue.toString().replace("[", "").replace("]","").replaceAll(" ", "");
 		else
 			return "0";
 	}
@@ -100,7 +104,7 @@ public class KlausurenServer {
 					}
 				}
 				if (!subset) {
-					allKlausuren.append(originalList + ",");
+					allKlausuren.append(originalList.toString().replaceAll(" ", "") + ",");
 //					System.out.println("All stand i:" + allKlausuren.toString());
 				}
 
