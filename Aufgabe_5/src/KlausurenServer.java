@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -65,17 +66,22 @@ public class KlausurenServer {
 	public static ArrayList<Integer> putValue(String key, ArrayList<Integer> value) {
 		ArrayList<Integer> sortedValues = new ArrayList<>(new TreeSet(value));
 		return KlausurInfos.put(key, sortedValues);
-
 	}
 
 	public static String getValue(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Integer> value = KlausurInfos.get(key); 
+		if(value != null)
+			return "1 " + value.toString();
+		else
+			return "0";
 	}
 
-	public static boolean deleteValue(String key) {
-		// TODO Auto-generated method stub
-		return false;
+	public static String deleteValue(String key) {
+		List<Integer> deletedValue = KlausurInfos.remove(key);
+		if(deletedValue != null)
+			return "1 " + deletedValue.toString();
+		else
+			return "0";
 	}
 
 	public static String getAllKlausuren() {

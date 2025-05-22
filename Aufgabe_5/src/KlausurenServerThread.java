@@ -52,9 +52,11 @@ public class KlausurenServerThread extends Thread {
 				break;
 			case "GET":
 				System.out.println(methode);
+				antwort.append(KlausurenServer.getValue(getKey(anfrage)));
 				break;
 			case "DEL":
 				System.out.println(methode);
+				antwort.append(KlausurenServer.deleteValue(getKey(anfrage)));
 				break;
 			case "GETALL":
 				System.out.println(methode);
