@@ -1,5 +1,7 @@
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
@@ -21,11 +23,8 @@ public class KlausurenServer {
 		int port = Integer.valueOf(args[0]).intValue();
 		try (ServerSocket server = new ServerSocket(port)) {
 			File KlausurInfoDatei = new File("/home/ino/Praktikum_java2/Aufgabe_5/src/KlausurenInformation");
-
-			try (ObjectInputStream initialdatei = new ObjectInputStream(new FileInputStream(KlausurInfoDatei));) {
-				KlausurInfos = (Map<String, ArrayList<Integer>>) initialdatei.readObject();
-			}
-
+			KlausurInfos = initilizeMap(KlausurInfoDatei);
+			
 			while (run) {
 				Socket client = server.accept();
 				KlausurenServerThread t = new KlausurenServerThread(client);
@@ -39,6 +38,24 @@ public class KlausurenServer {
 
 		System.exit(0);
 
+	}
+	
+	public static Map<String, ArrayList<Integer>> initilizeMap(File file){
+		
+
+		try (ObjectInputStream datei = new ObjectInputStream(new FileInputStream(file));) {
+			return  (Map<String, ArrayList<Integer>>) datei.readObject();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			return new HashMap<String, ArrayList<Integer>>();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return new HashMap<String, ArrayList<Integer>>();
 	}
 
 	public static Map<String, ArrayList<Integer>> getKlausurInfos() {
