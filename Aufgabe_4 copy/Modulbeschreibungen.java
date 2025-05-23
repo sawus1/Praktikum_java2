@@ -39,8 +39,7 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 
 			module.add(m);
 
-			if (!studiengaenge.contains(m.studiengang))
-				studiengaenge.add(m.studiengang);
+			studiengaenge.add(m.studiengang);
 
 		}
 		System.out.println("studiengänge" + studiengaenge);
@@ -234,53 +233,54 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 	}
 
 	public String getJSON(String Studiengang) {
-	    Set<Modul> mod = new HashSet<>();
-	    for (Modul m : module) {
-	        if (m.studiengang.equals(Studiengang))
-	            mod.add(m);
-	    }
+		Set<Modul> mod = new HashSet<>();
+		for (Modul m : module) {
+			if (m.studiengang.equals(Studiengang))
+				mod.add(m);
+		}
 
-	    StringBuilder jsonResult = new StringBuilder();
-	    jsonResult.append("[\n");
+		StringBuilder jsonResult = new StringBuilder();
+		jsonResult.append("[\n");
 
-	    int modulCount = 0;
-	    for (Modul modul : mod) {
-	        if (modulCount > 0) jsonResult.append(",\n");
-	        modulCount++;
-	        modul.ectsPoints = modul.ectsPoints.replace(',', '.');
-	        jsonResult.append("{\n");
-	        jsonResult.append("\t\"bezeichnung\": \"" + modul.name + "\",\n");
-	        jsonResult.append("\t\"kuerzel\": \"" + modul.kuerzel + "\",\n");
-	        jsonResult.append("\t\"studiengang\": \"" + modul.studiengang + "\",\n");
-	        jsonResult.append("\t\"semester\": \"" + modul.semester + "\",\n");
-	        jsonResult.append("\t\"art\": \"" + modul.type + "\",\n");
-	        jsonResult.append("\t\"ects\": " + modul.ectsPoints + ",\n");
-	        jsonResult.append("\t\"pruefungsform\": \"" + modul.examtype + "\",\n");
-	        jsonResult.append("\t\"verantwortlicher\": \"" + modul.PrsInCharge + "\",\n");
-	        jsonResult.append("\t\"veranstaltungen\": [\n");
-	        int veranstaltungCount = 0;
-	        for (Veranstaltung v : modul.Veranstaltungen) {
-	            if (veranstaltungCount > 0) jsonResult.append(",\n");
-	            veranstaltungCount++;
+		int modulCount = 0;
+		for (Modul modul : mod) {
+			if (modulCount > 0)
+				jsonResult.append(",\n");
+			modulCount++;
+			modul.ectsPoints = modul.ectsPoints.replace(',', '.');
+			jsonResult.append("{\n");
+			jsonResult.append("\t\"bezeichnung\": \"" + modul.name + "\",\n");
+			jsonResult.append("\t\"kuerzel\": \"" + modul.kuerzel + "\",\n");
+			jsonResult.append("\t\"studiengang\": \"" + modul.studiengang + "\",\n");
+			jsonResult.append("\t\"semester\": \"" + modul.semester + "\",\n");
+			jsonResult.append("\t\"art\": \"" + modul.type + "\",\n");
+			jsonResult.append("\t\"ects\": " + modul.ectsPoints + ",\n");
+			jsonResult.append("\t\"pruefungsform\": \"" + modul.examtype + "\",\n");
+			jsonResult.append("\t\"verantwortlicher\": \"" + modul.PrsInCharge + "\",\n");
+			jsonResult.append("\t\"veranstaltungen\": [\n");
+			int veranstaltungCount = 0;
+			for (Veranstaltung v : modul.Veranstaltungen) {
+				if (veranstaltungCount > 0)
+					jsonResult.append(",\n");
+				veranstaltungCount++;
 
-	            jsonResult.append("\t{\n");
-	            jsonResult.append("\t\t\"titel\": \"" + v.titel + "\",\n");
-	            jsonResult.append("\t\t\"dozenten\": \"" + v.Dozent + "\",\n");
-	            jsonResult.append("\t\t\"sws\": " + v.sws + "\n");
-	            jsonResult.append("\t}");
-	        }
-	        jsonResult.append("\n\t]\n");
-	        jsonResult.append("}");
-	    }
+				jsonResult.append("\t{\n");
+				jsonResult.append("\t\t\"titel\": \"" + v.titel + "\",\n");
+				jsonResult.append("\t\t\"dozenten\": \"" + v.Dozent + "\",\n");
+				jsonResult.append("\t\t\"sws\": " + v.sws + "\n");
+				jsonResult.append("\t}");
+			}
+			jsonResult.append("\n\t]\n");
+			jsonResult.append("}");
+		}
 
-	    jsonResult.append("\n]");
-	    return jsonResult.toString();
+		jsonResult.append("\n]");
+		return jsonResult.toString();
 	}
-
 
 	public static void main(String[] args) {
 		try {
-			String testDateipfad = "/Users/oleksandrsavcenko/Workspace/Java/j/Praktikum_java2/Aufgabe_4/mb-junit.txt";
+			String testDateipfad = "/home/ino/Praktikum_java2/Aufgabe_4 copy/Modulbeschreibungen";
 			Modulbeschreibungen mb = new Modulbeschreibungen(testDateipfad);
 
 			System.out.println("Anzahl Module insgesamt: " + mb.module.size());
@@ -296,11 +296,12 @@ public class Modulbeschreibungen implements IModulbeschreibungen {
 				System.out.println(mb.getJSON(studiengang));
 			}
 
-			//System.out.println("Verzahnte Module: " + mb.getVerzahnteModule());
-			//System.out.println("Sortierte Studiengänge (nach SWS): " + mb.getSortierteStudiengaenge());
-			//System.out.println("Zertifikate für BMT: " + mb.getZertifikate("BMT"));
-			//System.out.println("Zertifikate für BI: " + mb.getZertifikate("BI"));
-			//System.out.println("Zertifikate für BET: " + mb.getZertifikate("BET"));
+			// System.out.println("Verzahnte Module: " + mb.getVerzahnteModule());
+			// System.out.println("Sortierte Studiengänge (nach SWS): " +
+			// mb.getSortierteStudiengaenge());
+			// System.out.println("Zertifikate für BMT: " + mb.getZertifikate("BMT"));
+			// System.out.println("Zertifikate für BI: " + mb.getZertifikate("BI"));
+			// System.out.println("Zertifikate für BET: " + mb.getZertifikate("BET"));
 
 		} catch (IOException e) {
 			System.err.println("Fehler beim Lesen der Datei: " + e.getMessage());

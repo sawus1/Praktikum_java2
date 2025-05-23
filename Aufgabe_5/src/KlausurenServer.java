@@ -1,125 +1,141 @@
-import java.io.EOFException;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class KlausurenServer {
 
-	private static Map<String, ArrayList<Integer>> KlausurInfos = new HashMap<>();
+	private static Map<String, ArrayList<Integer>> klausurInfos = new HashMap<>();
 	private static boolean run = true;
+	private static ServerSocket so;
+	private static File saveFile = new File("/home/ino/Praktikum_java2/Aufgabe_5/src/KlausurenInformation");
+
+	public KlausurenServer(int port) {
+		try {
+			so = new ServerSocket(port);
+			klausurInfos = loadMap(saveFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+	}
 
 	public static void main(String[] args) {
 
-		int port = Integer.valueOf(args[0]).intValue();
-		try (ServerSocket server = new ServerSocket(port)) {
-			File KlausurInfoDatei = new File("/home/ino/Praktikum_java2/Aufgabe_5/src/KlausurenInformation");
-			KlausurInfos = initilizeMap(KlausurInfoDatei);
-			
+		try {
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			System.out.println("Geben Sie den Port ein");
+			String port = br.readLine();
+			int portnum = Integer.parseInt(port);
+			KlausurenServer serv = new KlausurenServer(portnum);
+			System.out.println("Server läuft auf Port: " + port);
+			br.close();
+
 			while (run) {
-				Socket client = server.accept();
-				KlausurenServerThread t = new KlausurenServerThread(client);
-				t.start();
-				t.join();
-				client.close();
+				try (Socket client = so.accept();) {
+					KlausurenServerThread t = new KlausurenServerThread(client);
+					t.start();
+					t.join();
+				}
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			saveData();
 		}
-
-		System.exit(0);
-
 	}
-	
-	public static Map<String, ArrayList<Integer>> initilizeMap(File file){
-		
 
-		try (ObjectInputStream datei = new ObjectInputStream(new FileInputStream(file));) {
-			return  (Map<String, ArrayList<Integer>>) datei.readObject();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			return new HashMap<String, ArrayList<Integer>>();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public static Map<String, ArrayList<Integer>> loadMap(File file) {
+		if (!file.exists())
+			return new HashMap<>();
+
+		try (ObjectInputStream dateiIn = new ObjectInputStream(new FileInputStream(file));) {
+			return (Map<String, ArrayList<Integer>>) dateiIn.readObject();
+		} catch (Exception e) {
+			System.err.println("Fehler beim Laden der Datei!");
+			System.err.println("Es sind keine vorherigen Informationen vorhanden");
+			return new HashMap<>();
 		}
-
-		return new HashMap<String, ArrayList<Integer>>();
 	}
 
 	public static Map<String, ArrayList<Integer>> getKlausurInfos() {
-		return KlausurInfos;
+		return klausurInfos;
 	}
 
-	public static String putValue(String key, ArrayList<Integer> value) {
+	public static synchronized String putValue(String key, ArrayList<Integer> value) {
 		ArrayList<Integer> sortedValues = new ArrayList<>(new TreeSet(value));
-		List<Integer> oldValue = KlausurInfos.put(key, sortedValues);
-		if(oldValue != null)
-			return "1 " + oldValue.toString().replace("[", "").replace("]","").replaceAll(" ", "");
-		else
-			return "1 ";
+		List<Integer> oldValue = klausurInfos.put(key, sortedValues);
+		return "1 " + (oldValue == null ? "" : listToString(oldValue));
 	}
 
-	public static String getValue(String key) {
-		List<Integer> value = KlausurInfos.get(key); 
-		if(value != null)
-			return "1 " + value.toString().replace("[", "").replace("]","").replaceAll(" ", "");
-		else
+	public static synchronized String getValue(String key) {
+		List<Integer> value = klausurInfos.get(key);
+		return value == null ? "0" : "1 " + listToString(value);
+	}
+
+	public static synchronized String deleteValue(String key) {
+		List<Integer> deletedValue = klausurInfos.remove(key);
+		return deletedValue == null ? "0" : "1 " + listToString(deletedValue);
+
+	}
+
+	public static synchronized String getAllKlausuren() {
+		if (klausurInfos.isEmpty())
 			return "0";
-	}
 
-	public static String deleteValue(String key) {
-		List<Integer> deletedValue = KlausurInfos.remove(key);
-		if(deletedValue != null)
-			return "1 " + deletedValue.toString().replace("[", "").replace("]","").replaceAll(" ", "");
-		else
-			return "0";
-	}
-
-	public static String getAllKlausuren() {
-		if (KlausurInfos.size() > 0) {
 //			System.out.println("full Map:" + KlausurInfos);
-			StringBuilder allKlausuren = new StringBuilder("1 ");
-			for (ArrayList<Integer> originalList : KlausurInfos.values()) {
-				boolean subset = false;
+		StringBuilder allKlausuren = new StringBuilder("1 ");
+		for (ArrayList<Integer> originalList : klausurInfos.values()) {
+			boolean subset = false;
 //				System.out.println("originalList: " + originalList);
-				for (ArrayList<Integer> otherList : KlausurInfos.values()) {
-					if (originalList != otherList) {
-						if (otherList.containsAll(originalList)) {
-							subset = true;
-						}
-//						System.out.println("otherList: " + otherList + subset);
+			for (ArrayList<Integer> otherList : klausurInfos.values()) {
+				if (originalList != otherList) {
+					if (otherList.containsAll(originalList)) {
+						subset = true;
 					}
+//						System.out.println("otherList: " + otherList + subset);
 				}
-				if (!subset) {
-					allKlausuren.append(originalList.toString().replaceAll(" ", "") + ",");
-//					System.out.println("All stand i:" + allKlausuren.toString());
-				}
-
 			}
-			System.out.println(allKlausuren.toString());
-			return allKlausuren.toString().substring(0,allKlausuren.length()-1);
-		} else
-			return "0";
+			if (!subset) {
+				allKlausuren.append(originalList.toString().replaceAll(" ", "") + ",");
+//					System.out.println("All stand i:" + allKlausuren.toString());
+			}
+
+		}
+//		System.out.println(allKlausuren.toString());
+		return allKlausuren.toString().substring(0, allKlausuren.length() - 1);
 
 	}
 
-	public static boolean stopServer() {
+	public static synchronized void stopServer() throws FileNotFoundException, IOException {
 		run = false;
-
-		return true;
 	}
 
+	private static String listToString(List<Integer> list) {
+		return list.stream().map(String::valueOf).collect(Collectors.joining(","));
+	}
+
+	private static void saveData() {
+		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(saveFile))) {
+			out.writeObject(klausurInfos);
+		} catch (IOException e) {
+			System.err.println("Fehler beim Speichern: " + e.getMessage());
+		}
+	}
 }

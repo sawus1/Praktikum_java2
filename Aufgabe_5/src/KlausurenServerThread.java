@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class KlausurenServerThread extends Thread {
-	Socket ClientSocket;
+	private final Socket ClientSocket;
 
 	public KlausurenServerThread(Socket client) {
 		ClientSocket = client;
@@ -34,50 +34,47 @@ public class KlausurenServerThread extends Thread {
 	@Override
 	public void run() {
 		try (BufferedReader eingang = new BufferedReader(new InputStreamReader(ClientSocket.getInputStream()));
-				PrintWriter serverAntwort = new PrintWriter(ClientSocket.getOutputStream(), true);
-				ObjectOutputStream dateiSpeichern = new ObjectOutputStream(
-						new FileOutputStream("/home/ino/Praktikum_java2/Aufgabe_5/src/KlausurenInformation"));) {
+				PrintWriter serverAntwort = new PrintWriter(ClientSocket.getOutputStream(), true);) {
 			String anfrage = eingang.readLine();
-			StringBuilder antwort = new StringBuilder("");
+//			StringBuilder antwort = new StringBuilder("");
+			String antwort;
 
 			System.out.println(anfrage);
 			String methode = anfrage.split(" ")[0].toUpperCase();
 			System.out.println("Methode: " + methode);
-			
+
 			switch (methode) {
 			case "PUT":
-				System.out.println("PUT");
-				antwort.append(KlausurenServer.putValue(getKey(anfrage), getValue(anfrage)));
+//				System.out.println("PUT");
+				antwort = (KlausurenServer.putValue(getKey(anfrage), getValue(anfrage)));
 				break;
 			case "GET":
-				System.out.println(methode);
-				antwort.append(KlausurenServer.getValue(getKey(anfrage)));
+//				System.out.println(methode);
+				antwort = (KlausurenServer.getValue(getKey(anfrage)));
 				break;
 			case "DEL":
-				System.out.println(methode);
-				antwort.append(KlausurenServer.deleteValue(getKey(anfrage)));
+//				System.out.println(methode);
+				antwort = (KlausurenServer.deleteValue(getKey(anfrage)));
 				break;
 			case "GETALL":
-				System.out.println(methode);
-			
-				antwort.append(KlausurenServer.getAllKlausuren());
+//				System.out.println(methode);
+
+				antwort = (KlausurenServer.getAllKlausuren());
 				break;
 			case "STOP":
-				System.out.println(methode);
+//				System.out.println(methode);
 
-				if (KlausurenServer.stopServer())
-					antwort.append("1");
-				else
-					antwort.append("0");
+				KlausurenServer.stopServer();
+				antwort = ("1");
 				break;
 			default:
-				antwort.append("0");
+				antwort = ("0");
 			}
-			dateiSpeichern.writeObject(KlausurenServer.getKlausurInfos());
-			serverAntwort.println(antwort.toString());
+			System.out.println("Antwort: " + antwort);
+			serverAntwort.println(antwort);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.err.println("Fehler beim bearbeiten des Threads: ");
 			e.printStackTrace();
 		}
 
