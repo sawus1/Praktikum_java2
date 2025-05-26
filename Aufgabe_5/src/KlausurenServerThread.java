@@ -71,6 +71,7 @@ public class KlausurenServerThread extends Thread {
 				antwort = ("0");
 			}
 			System.out.println("Antwort: " + antwort);
+			System.out.println();
 			serverAntwort.println(antwort);
 
 		} catch (IOException e) {

@@ -20,12 +20,12 @@ public class KlausurenServer {
 
 	private static Map<String, ArrayList<Integer>> klausurInfos = new HashMap<>();
 	private static boolean run = true;
-	private static ServerSocket so;
+	private ServerSocket socket;
 	private static File saveFile = new File("/home/ino/Praktikum_java2/Aufgabe_5/src/KlausurenInformation");
 
 	public KlausurenServer(int port) {
 		try {
-			so = new ServerSocket(port);
+			socket = new ServerSocket(port);
 			klausurInfos = loadMap(saveFile);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -47,7 +47,7 @@ public class KlausurenServer {
 			br.close();
 
 			while (run) {
-				try (Socket client = so.accept();) {
+				try (Socket client = serv.socket.accept();) {
 					KlausurenServerThread t = new KlausurenServerThread(client);
 					t.start();
 					t.join();
@@ -128,7 +128,7 @@ public class KlausurenServer {
 	}
 
 	private static String listToString(List<Integer> list) {
-		return list.stream().map(String::valueOf).collect(Collectors.joining(","));
+		return list.toString().replaceAll("\\[|\\]| ", "");
 	}
 
 	private static void saveData() {
