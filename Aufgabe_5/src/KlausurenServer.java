@@ -20,7 +20,11 @@ public class KlausurenServer {
 	private Map<String, List<Integer>> klausurInfos = new HashMap<>();
 	private boolean run = true;
 	private ServerSocket socket;
+<<<<<<< HEAD
 	private final static File saveFile = new File("/home/ino/Praktikum_java2/Aufgabe_5/src/KlausurenInformation");
+=======
+	private static File saveFile = new File("/Users/oleksandrsavcenko/Workspace/Java/Praktikum_java2/Aufgabe_5/src/KlausurenInformation");
+>>>>>>> 515d6a353cf98c5ddc24f5005429f902dd1f3a0e
 
 	public KlausurenServer(int port) {
 		try {
@@ -36,6 +40,7 @@ public class KlausurenServer {
 	public static void main(String[] args) {
 		KlausurenServer serv = null;
 		try {
+			KlausurenServer serv = null;
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("Geben Sie den Port ein");
@@ -45,12 +50,20 @@ public class KlausurenServer {
 			System.out.println("Server läuft auf Port: " + port);
 			br.close();
 
+<<<<<<< HEAD
 			while (serv.run) {
 				
 					Socket client = serv.socket.accept();
 					KlausurenServerThread t = new KlausurenServerThread(client, serv);
 					t.start();
 				
+=======
+			while (run) {
+				try (Socket client = serv.socket.accept();) {
+					KlausurenServerThread t = new KlausurenServerThread(client, serv);
+					t.start();
+					//t.join();
+>>>>>>> 515d6a353cf98c5ddc24f5005429f902dd1f3a0e
 				}
 			
 		} catch (Exception e) {
@@ -60,7 +73,11 @@ public class KlausurenServer {
 		}
 	}
 
+<<<<<<< HEAD
 	public Map<String, List<Integer>> loadMap(File file) {
+=======
+	public Map<String, ArrayList<Integer>> loadMap(File file) {
+>>>>>>> 515d6a353cf98c5ddc24f5005429f902dd1f3a0e
 		if (!file.exists())
 			return new HashMap<>();
 
@@ -73,12 +90,21 @@ public class KlausurenServer {
 		}
 	}
 
+<<<<<<< HEAD
 	public Map<String, List<Integer>> getKlausurInfos() {
 		return klausurInfos;
 	}
 
 	public synchronized String putValue(String key, List<Integer> value) {
 		List<Integer> sortedValues = new ArrayList<>(new TreeSet(value));
+=======
+	public Map<String, ArrayList<Integer>> getKlausurInfos() {
+		return klausurInfos;
+	}
+
+	public synchronized String putValue(String key, ArrayList<Integer> value) {
+		ArrayList<Integer> sortedValues = new ArrayList<>(new TreeSet(value));
+>>>>>>> 515d6a353cf98c5ddc24f5005429f902dd1f3a0e
 		List<Integer> oldValue = klausurInfos.put(key, sortedValues);
 		return "1 " + (oldValue == null ? "" : listToString(oldValue));
 	}
@@ -126,7 +152,7 @@ public class KlausurenServer {
 		run = false;
 	}
 
-	private static String listToString(List<Integer> list) {
+	private String listToString(List<Integer> list) {
 		return list.toString().replaceAll("\\[|\\]| ", "");
 	}
 

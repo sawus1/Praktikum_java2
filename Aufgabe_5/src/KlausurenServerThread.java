@@ -8,8 +8,14 @@ import java.util.ArrayList;
 public class KlausurenServerThread extends Thread {
 	private final Socket ClientSocket;
 	private final KlausurenServer server;
+<<<<<<< HEAD
 	
 	public KlausurenServerThread(Socket client, KlausurenServer server) {
+=======
+
+	public KlausurenServerThread(Socket client, KlausurenServer server) {
+		this.server = server;
+>>>>>>> 515d6a353cf98c5ddc24f5005429f902dd1f3a0e
 		ClientSocket = client;
 		this.server = server;
 	}
