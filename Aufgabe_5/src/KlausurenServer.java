@@ -14,14 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 public class KlausurenServer {
 
-	private static Map<String, ArrayList<Integer>> klausurInfos = new HashMap<>();
-	private static boolean run = true;
+	private Map<String, List<Integer>> klausurInfos = new HashMap<>();
+	private boolean run = true;
 	private ServerSocket socket;
-	private static File saveFile = new File("/home/ino/Praktikum_java2/Aufgabe_5/src/KlausurenInformation");
+	private final static File saveFile = new File("/home/ino/Praktikum_java2/Aufgabe_5/src/KlausurenInformation");
 
 	public KlausurenServer(int port) {
 		try {
@@ -35,38 +34,38 @@ public class KlausurenServer {
 	}
 
 	public static void main(String[] args) {
-
+		KlausurenServer serv = null;
 		try {
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("Geben Sie den Port ein");
 			String port = br.readLine();
 			int portnum = Integer.parseInt(port);
-			KlausurenServer serv = new KlausurenServer(portnum);
+			serv = new KlausurenServer(portnum);
 			System.out.println("Server läuft auf Port: " + port);
 			br.close();
 
-			while (run) {
-				try (Socket client = serv.socket.accept();) {
-					KlausurenServerThread t = new KlausurenServerThread(client);
+			while (serv.run) {
+				
+					Socket client = serv.socket.accept();
+					KlausurenServerThread t = new KlausurenServerThread(client, serv);
 					t.start();
-					t.join();
+				
 				}
-
-			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			saveData();
+			serv.saveData();
 		}
 	}
 
-	public static Map<String, ArrayList<Integer>> loadMap(File file) {
+	public Map<String, List<Integer>> loadMap(File file) {
 		if (!file.exists())
 			return new HashMap<>();
 
 		try (ObjectInputStream dateiIn = new ObjectInputStream(new FileInputStream(file));) {
-			return (Map<String, ArrayList<Integer>>) dateiIn.readObject();
+			return (Map<String, List<Integer>>) dateiIn.readObject();
 		} catch (Exception e) {
 			System.err.println("Fehler beim Laden der Datei!");
 			System.err.println("Es sind keine vorherigen Informationen vorhanden");
@@ -74,37 +73,37 @@ public class KlausurenServer {
 		}
 	}
 
-	public static Map<String, ArrayList<Integer>> getKlausurInfos() {
+	public Map<String, List<Integer>> getKlausurInfos() {
 		return klausurInfos;
 	}
 
-	public static synchronized String putValue(String key, ArrayList<Integer> value) {
-		ArrayList<Integer> sortedValues = new ArrayList<>(new TreeSet(value));
+	public synchronized String putValue(String key, List<Integer> value) {
+		List<Integer> sortedValues = new ArrayList<>(new TreeSet(value));
 		List<Integer> oldValue = klausurInfos.put(key, sortedValues);
 		return "1 " + (oldValue == null ? "" : listToString(oldValue));
 	}
 
-	public static synchronized String getValue(String key) {
+	public synchronized String getValue(String key) {
 		List<Integer> value = klausurInfos.get(key);
 		return value == null ? "0" : "1 " + listToString(value);
 	}
 
-	public static synchronized String deleteValue(String key) {
+	public synchronized String deleteValue(String key) {
 		List<Integer> deletedValue = klausurInfos.remove(key);
 		return deletedValue == null ? "0" : "1 " + listToString(deletedValue);
 
 	}
 
-	public static synchronized String getAllKlausuren() {
+	public synchronized String getAllKlausuren() {
 		if (klausurInfos.isEmpty())
 			return "0";
 
 //			System.out.println("full Map:" + KlausurInfos);
 		StringBuilder allKlausuren = new StringBuilder("1 ");
-		for (ArrayList<Integer> originalList : klausurInfos.values()) {
+		for (List<Integer> originalList : klausurInfos.values()) {
 			boolean subset = false;
 //				System.out.println("originalList: " + originalList);
-			for (ArrayList<Integer> otherList : klausurInfos.values()) {
+			for (List<Integer> otherList : klausurInfos.values()) {
 				if (originalList != otherList) {
 					if (otherList.containsAll(originalList)) {
 						subset = true;
@@ -123,7 +122,7 @@ public class KlausurenServer {
 
 	}
 
-	public static synchronized void stopServer() throws FileNotFoundException, IOException {
+	public synchronized void stopServer() throws FileNotFoundException, IOException {
 		run = false;
 	}
 
@@ -131,7 +130,7 @@ public class KlausurenServer {
 		return list.toString().replaceAll("\\[|\\]| ", "");
 	}
 
-	private static void saveData() {
+	private void saveData() {
 		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(saveFile))) {
 			out.writeObject(klausurInfos);
 		} catch (IOException e) {

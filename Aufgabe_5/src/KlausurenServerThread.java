@@ -1,21 +1,17 @@
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class KlausurenServerThread extends Thread {
 	private final Socket ClientSocket;
-
-	public KlausurenServerThread(Socket client) {
+	private final KlausurenServer server;
+	
+	public KlausurenServerThread(Socket client, KlausurenServer server) {
 		ClientSocket = client;
+		this.server = server;
 	}
 
 	public String getKey(String line) {
@@ -46,25 +42,25 @@ public class KlausurenServerThread extends Thread {
 			switch (methode) {
 			case "PUT":
 //				System.out.println("PUT");
-				antwort = (KlausurenServer.putValue(getKey(anfrage), getValue(anfrage)));
+				antwort = (server.putValue(getKey(anfrage), getValue(anfrage)));
 				break;
 			case "GET":
 //				System.out.println(methode);
-				antwort = (KlausurenServer.getValue(getKey(anfrage)));
+				antwort = (server.getValue(getKey(anfrage)));
 				break;
 			case "DEL":
 //				System.out.println(methode);
-				antwort = (KlausurenServer.deleteValue(getKey(anfrage)));
+				antwort = (server.deleteValue(getKey(anfrage)));
 				break;
 			case "GETALL":
 //				System.out.println(methode);
 
-				antwort = (KlausurenServer.getAllKlausuren());
+				antwort = (server.getAllKlausuren());
 				break;
 			case "STOP":
 //				System.out.println(methode);
 
-				KlausurenServer.stopServer();
+				server.stopServer();
 				antwort = ("1");
 				break;
 			default:
