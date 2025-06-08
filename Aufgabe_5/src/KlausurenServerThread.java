@@ -13,8 +13,10 @@ import java.util.stream.Collectors;
 
 public class KlausurenServerThread extends Thread {
 	private final Socket ClientSocket;
+	private final KlausurenServer server;
 
-	public KlausurenServerThread(Socket client) {
+	public KlausurenServerThread(Socket client, KlausurenServer server) {
+		this.server = server;
 		ClientSocket = client;
 	}
 
@@ -46,25 +48,25 @@ public class KlausurenServerThread extends Thread {
 			switch (methode) {
 			case "PUT":
 //				System.out.println("PUT");
-				antwort = (KlausurenServer.putValue(getKey(anfrage), getValue(anfrage)));
+				antwort = (server.putValue(getKey(anfrage), getValue(anfrage)));
 				break;
 			case "GET":
 //				System.out.println(methode);
-				antwort = (KlausurenServer.getValue(getKey(anfrage)));
+				antwort = (server.getValue(getKey(anfrage)));
 				break;
 			case "DEL":
 //				System.out.println(methode);
-				antwort = (KlausurenServer.deleteValue(getKey(anfrage)));
+				antwort = (server.deleteValue(getKey(anfrage)));
 				break;
 			case "GETALL":
 //				System.out.println(methode);
 
-				antwort = (KlausurenServer.getAllKlausuren());
+				antwort = (server.getAllKlausuren());
 				break;
 			case "STOP":
 //				System.out.println(methode);
 
-				KlausurenServer.stopServer();
+				server.stopServer();
 				antwort = ("1");
 				break;
 			default:

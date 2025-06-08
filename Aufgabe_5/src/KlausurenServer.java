@@ -21,7 +21,7 @@ public class KlausurenServer {
 	private static Map<String, ArrayList<Integer>> klausurInfos = new HashMap<>();
 	private static boolean run = true;
 	private ServerSocket socket;
-	private static File saveFile = new File("/home/ino/Praktikum_java2/Aufgabe_5/src/KlausurenInformation");
+	private static File saveFile = new File("/Users/oleksandrsavcenko/Workspace/Java/Praktikum_java2/Aufgabe_5/src/KlausurenInformation");
 
 	public KlausurenServer(int port) {
 		try {
@@ -37,20 +37,21 @@ public class KlausurenServer {
 	public static void main(String[] args) {
 
 		try {
+			KlausurenServer serv = null;
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("Geben Sie den Port ein");
 			String port = br.readLine();
 			int portnum = Integer.parseInt(port);
-			KlausurenServer serv = new KlausurenServer(portnum);
+			serv = new KlausurenServer(portnum);
 			System.out.println("Server läuft auf Port: " + port);
 			br.close();
 
 			while (run) {
 				try (Socket client = serv.socket.accept();) {
-					KlausurenServerThread t = new KlausurenServerThread(client);
+					KlausurenServerThread t = new KlausurenServerThread(client, serv);
 					t.start();
-					t.join();
+					//t.join();
 				}
 
 			}
@@ -61,7 +62,7 @@ public class KlausurenServer {
 		}
 	}
 
-	public static Map<String, ArrayList<Integer>> loadMap(File file) {
+	public Map<String, ArrayList<Integer>> loadMap(File file) {
 		if (!file.exists())
 			return new HashMap<>();
 
@@ -74,28 +75,28 @@ public class KlausurenServer {
 		}
 	}
 
-	public static Map<String, ArrayList<Integer>> getKlausurInfos() {
+	public Map<String, ArrayList<Integer>> getKlausurInfos() {
 		return klausurInfos;
 	}
 
-	public static synchronized String putValue(String key, ArrayList<Integer> value) {
+	public synchronized String putValue(String key, ArrayList<Integer> value) {
 		ArrayList<Integer> sortedValues = new ArrayList<>(new TreeSet(value));
 		List<Integer> oldValue = klausurInfos.put(key, sortedValues);
 		return "1 " + (oldValue == null ? "" : listToString(oldValue));
 	}
 
-	public static synchronized String getValue(String key) {
+	public synchronized String getValue(String key) {
 		List<Integer> value = klausurInfos.get(key);
 		return value == null ? "0" : "1 " + listToString(value);
 	}
 
-	public static synchronized String deleteValue(String key) {
+	public synchronized String deleteValue(String key) {
 		List<Integer> deletedValue = klausurInfos.remove(key);
 		return deletedValue == null ? "0" : "1 " + listToString(deletedValue);
 
 	}
 
-	public static synchronized String getAllKlausuren() {
+	public synchronized String getAllKlausuren() {
 		if (klausurInfos.isEmpty())
 			return "0";
 
@@ -123,11 +124,11 @@ public class KlausurenServer {
 
 	}
 
-	public static synchronized void stopServer() throws FileNotFoundException, IOException {
+	public synchronized void stopServer() throws FileNotFoundException, IOException {
 		run = false;
 	}
 
-	private static String listToString(List<Integer> list) {
+	private String listToString(List<Integer> list) {
 		return list.toString().replaceAll("\\[|\\]| ", "");
 	}
 
